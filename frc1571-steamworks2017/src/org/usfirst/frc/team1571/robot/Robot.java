@@ -5,11 +5,13 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.networktables.NetworkTable;
+import edu.wpi.first.wpilibj.networktables.PersistentException;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import org.usfirst.frc.team1571.robot.commands.ExampleCommand;
-import org.usfirst.frc.team1571.robot.subsystems.ExampleSubsystem;
+import org.usfirst.frc.team1571.robot.commands.*;
+import org.usfirst.frc.team1571.robot.subsystems.*;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -20,22 +22,42 @@ import org.usfirst.frc.team1571.robot.subsystems.ExampleSubsystem;
  */
 public class Robot extends IterativeRobot {
 
-	public static final ExampleSubsystem exampleSubsystem = new ExampleSubsystem();
 	public static OI oi;
-
+	
 	Command autonomousCommand;
-	SendableChooser<Command> chooser = new SendableChooser<>();
+	Command joystickCommand;
+
+	public static Agitator agitator;
+	public static CameraSystem cameraSystem;
+	public static Climber climber;
+	public static DriveSystem driveSystem;
+	public static Feeder feeder;
+	public static Intake intake;
+	public static LEDSystem ledSystem;
+	public static PowerDistributionSystem powerDistributionSystem;
+	public static Shooter shooter;
+	NetworkTable preferencesTable;
+
+	SendableChooser<Command> autoChooser = new SendableChooser<>();
 
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
 	 */
-	@Override
 	public void robotInit() {
+		preferencesTable = RobotMap.initPreferences();
+		RobotMap.init();
+		
 		oi = new OI();
-		chooser.addDefault("Default Auto", new ExampleCommand());
-		// chooser.addObject("My Auto", new MyAutoCommand());
-		SmartDashboard.putData("Auto mode", chooser);
+		
+		autoChooser.addDefault("Autodetect Station Auto", new AutoBlueCenter());
+		autoChooser.addObject("Blue Center Auto", new AutoBlueCenter());
+		autoChooser.addObject("Blue Left Auto", new AutoBlueLeft());
+		autoChooser.addObject("Blue Right Auto", new AutoBlueRight());
+		autoChooser.addObject("Red Center Auto", new AutoRedCenter());
+		autoChooser.addObject("Red Left Auto", new AutoRedLeft());
+		autoChooser.addObject("Red Right Auto", new AutoRedRight());
+		SmartDashboard.putData("Auto mode", autoChooser);
 	}
 
 	/**
@@ -66,7 +88,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		autonomousCommand = chooser.getSelected();
+		autonomousCommand = autoChooser.getSelected();
 
 		/*
 		 * String autoSelected = SmartDashboard.getString("Auto Selector",
@@ -85,17 +107,19 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
+		RobotMap.updatePreferences(preferencesTable);
 		Scheduler.getInstance().run();
 	}
 
 	@Override
 	public void teleopInit() {
-		// This makes sure that the autonomous stops running when
-		// teleop starts running. If you want the autonomous to
-		// continue until interrupted by another command, remove
-		// this line or comment it out.
+		joystickCommand = new JoystickManager();
+		
 		if (autonomousCommand != null)
 			autonomousCommand.cancel();
+		
+		if(joystickCommand == null)
+			joystickCommand.start();
 	}
 
 	/**
@@ -103,6 +127,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
+		RobotMap.updatePreferences(preferencesTable);
 		Scheduler.getInstance().run();
 	}
 
