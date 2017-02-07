@@ -11,25 +11,28 @@ public class DriveDistance extends Command {
 	
 	private boolean isFinished;
 	private double distance, speed, steering;
+	DriveSpeed driveSpeedCommand;
 
     public DriveDistance(double distance, double speed, double steering) {
     	this.distance = distance;
     	this.speed = speed;
     	this.steering = steering;
-    	requires(Robot.driveSystem);
     }
 
     protected void initialize() {
     	isFinished = false;
+    	driveSpeedCommand = new DriveSpeed(speed, steering);
+    	driveSpeedCommand.start();
+    	
+    	Robot.driveSystem.resetEncoders();
     }
 
     protected void execute() {
-    	Robot.driveSystem.tankDrive(speed, steering);
     	
     	double leftCounts = Robot.driveSystem.getEncoderDistance("LEFT");
     	double rightCounts = Robot.driveSystem.getEncoderDistance("RIGHT");
     	
-    	if((leftCounts + rightCounts)/2 > distance) {
+    	if((leftCounts + rightCounts)/2 >= distance) {
     		isFinished = true;
     	}
     }
@@ -39,7 +42,7 @@ public class DriveDistance extends Command {
     }
 
     protected void end() {
-    	Robot.driveSystem.tankDrive(0, 0);
+    	new DriveSpeed(0, 0);
     }
 
     protected void interrupted() {
