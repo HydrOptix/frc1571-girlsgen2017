@@ -7,6 +7,7 @@ public class TurnAngle extends Command {
 	
 	double speed, angle, lastAngle;
 	boolean isFinished = false;
+	TurnSpeed turnCommand;
 
     public TurnAngle(double speed, double angle) {
     	this.speed = speed;
@@ -16,7 +17,8 @@ public class TurnAngle extends Command {
     protected void initialize() {
     	isFinished = true;
     	lastAngle = Robot.driveSystem.getGyroAngle();
-    	new TurnSpeed(speed);
+    	turnCommand = new TurnSpeed(speed);
+    	turnCommand.start();
     }
 
     protected void execute() {
