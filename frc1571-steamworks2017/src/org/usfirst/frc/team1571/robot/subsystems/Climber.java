@@ -11,10 +11,9 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  */
 public class Climber extends Subsystem {
 
-	private CANTalon climberTalon = RobotMap.climberTalon;
+	private final CANTalon climberTalon = RobotMap.climberTalon;
 	
 	public void initDefaultCommand() {
-		setDefaultCommand(null);
 	}
 	
 	public void startClimber() {
