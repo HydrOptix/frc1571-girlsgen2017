@@ -2,24 +2,41 @@ package org.usfirst.frc.team1571.robot.commands;
 
 import org.usfirst.frc.team1571.robot.Robot;
 
-import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj.command.Command;
 
 /**
  *
  */
-public class DriveSpeed extends InstantCommand {
+public class DriveSpeed extends Command {
 	
 	double speed, steering;
+	boolean isFinished;
 
     public DriveSpeed(double speed, double steering) {
-    	requires(Robot.driveSystem);
+        requires(Robot.driveSystem);
         this.speed = speed;
         this.steering = steering;
     }
 
     protected void initialize() {
-    	System.out.println("Driving Speed");
+    	if(speed == 0) {
+    		isFinished = true;
+    	} else {
+    		isFinished = false;
+    	}
+    }
+
+    protected void execute() {
     	Robot.driveSystem.tankDrive(speed, steering);
     }
 
+    protected boolean isFinished() {
+        return false;
+    }
+
+    protected void end() {
+    }
+
+    protected void interrupted() {
+    }
 }
