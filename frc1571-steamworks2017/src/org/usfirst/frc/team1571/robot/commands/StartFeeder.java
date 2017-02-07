@@ -12,7 +12,6 @@ public class StartFeeder extends InstantCommand {
     public StartFeeder() {
     }
 
-    // Called once when the command executes
     protected void initialize() {
     	Robot.feeder.startFeeder();
     }
