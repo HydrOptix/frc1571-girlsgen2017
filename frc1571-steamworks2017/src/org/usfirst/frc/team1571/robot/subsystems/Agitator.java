@@ -9,10 +9,9 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class Agitator extends Subsystem {
 	
-	private CANTalon agitatorTalon = RobotMap.agitatorTalon;
+	private final CANTalon agitatorTalon = RobotMap.agitatorTalon;
 
     public void initDefaultCommand() {
-		setDefaultCommand(null);
     }
     
     public void startAgitator() {
