@@ -5,6 +5,7 @@ import org.usfirst.frc.team1571.robot.commands.*;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 /**
@@ -63,11 +64,18 @@ public class OI {
 			driverButtonA.whenPressed(new StartIntake());
 			driverButtonA.whenReleased(new StopIntake());
 			
-		driverButtonX = new JoystickButton(driverController, 2);
-			driverButtonX.whileHeld(new AimBotMaster());
+		driverButtonX = new JoystickButton(driverController, 3);
+			driverButtonX.whileHeld(new Aimbot());
+			driverButtonX.whenReleased(new JoystickManager());
 			
 		auxButtonTrigger = new JoystickButton(auxJoystick, 1);
+		auxButtonSecondary = new JoystickButton(auxJoystick, 2);
 		
-		
+		//SmartDashboard buttons
+		SmartDashboard.putData("Joystick Manager Command", new JoystickManager());
+		SmartDashboard.putData("Stop Driving", new DriveSpeed(0, 0));
+		SmartDashboard.putData("LEDs Off", new LEDSolid(0,0,0,20));
+		SmartDashboard.putData("LEDs Rainbow Theater Chase", new LEDTheaterChaseRainbow(20));
+		SmartDashboard.putData("LEDs Rainbow Cycle", new LEDRainbowCycle(5));
 	}
 }
