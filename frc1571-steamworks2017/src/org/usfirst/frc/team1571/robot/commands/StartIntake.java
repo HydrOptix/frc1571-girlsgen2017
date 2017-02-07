@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 public class StartIntake extends InstantCommand {
 
     public StartIntake() {
+    	requires(Robot.intake);
     }
 
     // Called once when the command executes
