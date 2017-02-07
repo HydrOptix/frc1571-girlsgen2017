@@ -12,23 +12,22 @@ import com.ctre.CANTalon;
 
 	
 public class DriveSystem extends Subsystem {
-	private CANTalon rightFront = RobotMap.driveTalonRightFront;
-	private CANTalon rightBack = RobotMap.driveTalonLeftBack;
+	private final CANTalon rightFront = RobotMap.driveTalonRightFront;
+	private final CANTalon rightBack = RobotMap.driveTalonLeftBack;
 	
-	private CANTalon leftFront = RobotMap.driveTalonLeftFront;
-	private CANTalon leftBack = RobotMap.driveTalonLeftBack;
+	private final CANTalon leftFront = RobotMap.driveTalonLeftFront;
+	private final CANTalon leftBack = RobotMap.driveTalonLeftBack;
 	
-	private ADXRS450_Gyro gyro = RobotMap.steeringGyro;
+	private final ADXRS450_Gyro gyro = RobotMap.steeringGyro;
 	
-	private Encoder leftEncoder = RobotMap.driveLeftEncoder;
-	private Encoder rightEncoder = RobotMap.driveRightEncoder;
+	private final Encoder leftEncoder = RobotMap.driveLeftEncoder;
+	private final Encoder rightEncoder = RobotMap.driveRightEncoder;
 	
 	private double lastStraightLeftSpeed = 1.00;
 	private double lastStraightRightSpeed = 1.00;
 
 
 	public void initDefaultCommand() {
-		setDefaultCommand(null);
 	}
 	
 	public void tankDrive(double speed, double steering) {
@@ -102,6 +101,11 @@ public class DriveSystem extends Subsystem {
 		} else {
 			return 0;
 		}
+	}
+	
+	public void resetEncoders() {
+		leftEncoder.reset();
+		rightEncoder.reset();
 	}
 	
 }
