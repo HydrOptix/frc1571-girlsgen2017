@@ -11,10 +11,9 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  */
 public class Feeder extends Subsystem {
 	
-	private CANTalon feederTalon = RobotMap.feederTalon;
+	private final CANTalon feederTalon = RobotMap.feederTalon;
 
     public void initDefaultCommand() {
-		setDefaultCommand(null);
     }
     
     public void startFeeder() {
