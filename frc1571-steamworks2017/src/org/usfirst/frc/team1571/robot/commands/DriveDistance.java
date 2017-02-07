@@ -42,7 +42,7 @@ public class DriveDistance extends Command {
     }
 
     protected void end() {
-    	new DriveSpeed(0, 0);
+    	driveSpeedCommand.end();
     }
 
     protected void interrupted() {
