@@ -35,6 +35,7 @@ public class DriveSpeed extends Command {
     }
 
     protected void end() {
+    	Robot.driveSystem.tankDrive(0, 0);
     }
 
     protected void interrupted() {
