@@ -11,17 +11,16 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  */
 public class Intake extends Subsystem {
 	
-	private CANTalon agitatorTalon = RobotMap.agitatorTalon;
+	private final CANTalon intakeTalon = RobotMap.intakeTalon;
 
 	public void initDefaultCommand() {
-		setDefaultCommand(null);
 	}
 	
 	public void startIntake() {
-		agitatorTalon.set(RobotMap.agitatorSpeed);
+		intakeTalon.set(RobotMap.agitatorSpeed);
 	}
 	
 	public void stopIntake() {
-		agitatorTalon.set(0);
+		intakeTalon.set(0);
 	}
 }
