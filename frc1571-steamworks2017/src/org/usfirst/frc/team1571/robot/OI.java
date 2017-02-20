@@ -48,6 +48,7 @@ public class OI {
 		
 	public JoystickButton driverButtonA;
 	public JoystickButton driverButtonX;
+	public JoystickButton driverButtonRightBumper;
 		
 	public Joystick auxJoystick;
 		public double auxJoystick_deadzoneRadiusTwist = .28;
@@ -61,12 +62,14 @@ public class OI {
 		auxJoystick = new Joystick(1);
 		
 		driverButtonA = new JoystickButton(driverController, 1);
-			driverButtonA.whenPressed(new StartIntake());
-			driverButtonA.whenReleased(new StopIntake());
+			driverButtonA.whenPressed(new ToggleFeeder());
 			
 		driverButtonX = new JoystickButton(driverController, 3);
-			driverButtonX.whileHeld(new Aimbot());
-			driverButtonX.whenReleased(new JoystickManager());
+			driverButtonX.whenPressed(new StartClimber());
+			driverButtonX.whenReleased(new StopClimber());
+			
+		driverButtonRightBumper = new JoystickButton(driverController, 5);
+			driverButtonRightBumper.whileHeld(new Aimbot());
 			
 		auxButtonTrigger = new JoystickButton(auxJoystick, 1);
 		auxButtonSecondary = new JoystickButton(auxJoystick, 2);
@@ -74,8 +77,5 @@ public class OI {
 		//SmartDashboard buttons
 		SmartDashboard.putData("Joystick Manager Command", new JoystickManager());
 		SmartDashboard.putData("Stop Driving", new DriveSpeed(0, 0));
-		SmartDashboard.putData("LEDs Off", new LEDSolid(0,0,0,20));
-		SmartDashboard.putData("LEDs Rainbow Theater Chase", new LEDTheaterChaseRainbow(20));
-		SmartDashboard.putData("LEDs Rainbow Cycle", new LEDRainbowCycle(5));
 	}
 }
