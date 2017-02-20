@@ -6,9 +6,6 @@ import com.ctre.CANTalon;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 
-/**
- *
- */
 public class Intake extends Subsystem {
 	
 	private final CANTalon intakeTalon = RobotMap.intakeTalon;
@@ -17,7 +14,7 @@ public class Intake extends Subsystem {
 	}
 	
 	public void startIntake() {
-		intakeTalon.set(RobotMap.agitatorSpeed);
+		intakeTalon.set(RobotMap.intakeSpeed);
 	}
 	
 	public void stopIntake() {
