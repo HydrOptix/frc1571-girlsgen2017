@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 
-
 public class JoystickManager extends Command {
 
     public JoystickManager() {
@@ -29,17 +28,11 @@ public class JoystickManager extends Command {
     	double driverTriggerLeft = Robot.oi.driverController.getTriggerAxis(Hand.kLeft);
     	double driverTriggerRight = Robot.oi.driverController.getTriggerAxis(Hand.kRight);
     	double auxTwistAxis = Robot.oi.auxJoystick.getRawAxis(2);
+    	double auxThrottle = (Robot.oi.auxJoystick.getRawAxis(3)-1)/-2;
     	boolean driverButtonX = Robot.oi.driverButtonX.get();
+    	boolean driverButtonRightBumper = Robot.oi.driverButtonRightBumper.get();
     	boolean auxButtonTrigger = Robot.oi.auxButtonTrigger.get();
     	boolean auxButtonSecondary = Robot.oi.auxButtonSecondary.get();
-    	SmartDashboard.putNumber("Left Joystick X", driverXLeft);
-    	SmartDashboard.putNumber("Left Trigger", driverTriggerLeft);
-    	SmartDashboard.putNumber("Right Trigger", driverTriggerRight);
-    	SmartDashboard.putNumber("Joystick Twist Axis", auxTwistAxis);
-    	SmartDashboard.putBoolean("X Button", driverButtonX);
-    	SmartDashboard.putBoolean("Joystick Trigger", auxButtonTrigger);
-    	SmartDashboard.putBoolean("Joystick Secondary Button", auxButtonSecondary);
-    	SmartDashboard.putBoolean("Driving", RobotMap.driving);
 
     	
     	if(Math.abs(driverXLeft) < Robot.oi.driverController_deadzoneRadiusLStick) {
@@ -61,42 +54,44 @@ public class JoystickManager extends Command {
     		RobotMap.driving = true;
     	}
     	    	
-    	if(!driverButtonX) {
+    	double driveThrottle = driverTriggerRight - driverTriggerLeft;
     	
-	    	if(RobotMap.driving) {	//If the driver is trying to drive the robot, run the commands needed 
-	    		double driveThrottle = driverTriggerRight - driverTriggerLeft; //Find the driving speed by combining the two gamepad trigger inputs
-	    		SmartDashboard.putNumber("Virtual Throttle", driveThrottle);
-	    		
-	    		if(driveThrottle == 0) { //If the robot isn't supposed to be moving forward (throttle is 0) then run the stationary turning command
-	    			if(driverXLeft != 0) {
-	    				System.out.println("Turning");
-	    				Robot.driveSystem.stationaryTurn(driveThrottle);
-	    			}
-	    		} else {				//If the robot is supposed to be moving forward (throttle is not 0) then run the driving/reduced turning code
-	    			System.out.println("Driving");
-	    			Robot.driveSystem.tankDrive(driveThrottle, driverXLeft);
-	    		}
-	    	} else {				//If the driver is not interacting with the robot, run the secondary joystick shooting code
-	    		double targetSpeed;
-	    		if(auxButtonSecondary) { //If the secondary button is pressed, auto-detect the speed the flywheels need to be running
-	    			double distance = Robot.cameraSystem.getTargetDistance();
-	    			targetSpeed = distance; //TODO - distance equation
-	    		} else { //If the secondary button is not pressed, run the flywheels at the speed specified by the throttle
-	    			targetSpeed = (Robot.oi.auxJoystick.getRawAxis(3)-1)/-2;
-	    		}
-    			Robot.shooter.setSpeed(targetSpeed);
-	    		
-	    		if(auxButtonTrigger) {
-	    			Robot.feeder.startFeeder();
-	    			Robot.agitator.startAgitator();
-	    		} else {
-	    			Robot.feeder.stopFeeder();
-	    			Robot.agitator.stopAgitator();
-	    		}
-	    		
-	    	}
+    	if(driveThrottle != 0) {
+    		System.out.println("Driving at " + driveThrottle + "," + driverXLeft);
+    		Robot.driveSystem.tankDrive(driveThrottle, driverXLeft);
+    		
+    		if(driveThrottle > 1) {
+    			Robot.ledSystem.theaterChase(0, 255, 0, (int)((driveThrottle - 1)/-1 * 40));
+    		} else {
+    			Robot.ledSystem.theaterChase(255, 0, 0, (int)((driveThrottle + 1) * 40));
+    		}
+    	} else if(driverXLeft != 0) {
+    		double turnThrottle = driverXLeft;
+    		System.out.println("Turning at " + driverXLeft);
+    		Robot.driveSystem.stationaryTurn(turnThrottle);
+    		
+    		Robot.ledSystem.rainbowCycle((int)((Math.abs(turnThrottle) -1)/-1 * 40));
+    	} else if(auxTwistAxis != 0){
+    		Robot.driveSystem.stationaryTurn(auxTwistAxis * .25);
+    	} else {
+    		System.out.println("Stopping");
+    		Robot.driveSystem.allStop();
     	}
     	
+    	if(auxButtonSecondary) {
+    		Robot.shooter.setSpeed(auxThrottle);
+    		if(auxButtonTrigger) {
+    			Robot.feeder.startFeeder();
+    			Robot.agitator.startAgitator();
+    		} else {
+    			Robot.feeder.stopFeeder();
+    			Robot.agitator.stopAgitator();
+    		}
+    	} else {
+    		Robot.shooter.setSpeed(0);
+    		Robot.feeder.stopFeeder();
+    		Robot.agitator.stopAgitator();
+    	}
     }
 
     protected boolean isFinished() {
