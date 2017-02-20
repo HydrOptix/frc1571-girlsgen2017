@@ -14,7 +14,14 @@ public class Shooter extends Subsystem {
 	}
 	
 	public void setSpeed(double speed) {
+		shooterTalon.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
 		shooterTalon.set(speed);
+	}
+	
+	public void setVelocity(double velocity) {
+		shooterTalon.changeControlMode(CANTalon.TalonControlMode.Speed);
+		shooterTalon.setPID(RobotMap.shooterP, RobotMap.shooterI, RobotMap.shooterD);
+		shooterTalon.set(velocity);
 	}
 	
 	public double getSpeed() {
@@ -23,5 +30,9 @@ public class Shooter extends Subsystem {
 	
 	public double getSpeedFromDistance(double distance) {
 		return RobotMap.shooterSpeedFunctionA * Math.pow(distance, 2) + RobotMap.shooterSpeedFunctionB * distance + RobotMap.shooterSpeedFunctionC;
+	}
+	
+	public double getVelocity() {
+		return shooterTalon.getEncVelocity();
 	}
 }
