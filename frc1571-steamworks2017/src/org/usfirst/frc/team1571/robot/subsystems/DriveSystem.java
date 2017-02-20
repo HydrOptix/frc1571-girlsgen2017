@@ -8,71 +8,58 @@ import org.usfirst.frc.team1571.robot.RobotMap;
 
 import com.ctre.CANTalon;
 
-
-
-	
 public class DriveSystem extends Subsystem {
-	private final CANTalon rightFront = RobotMap.driveTalonRightFront;
-	private final CANTalon rightBack = RobotMap.driveTalonLeftBack;
+	private final CANTalon rightMaster = RobotMap.driveTalonRightMaster;
+	private final CANTalon rightSlave = RobotMap.driveTalonRightSlave;
 	
-	private final CANTalon leftFront = RobotMap.driveTalonLeftFront;
-	private final CANTalon leftBack = RobotMap.driveTalonLeftBack;
+	private final CANTalon leftMaster = RobotMap.driveTalonLeftMaster;
+	private final CANTalon leftSlave = RobotMap.driveTalonLeftSlave;
 	
 	private final ADXRS450_Gyro gyro = RobotMap.steeringGyro;
 	
 	private final Encoder leftEncoder = RobotMap.driveLeftEncoder;
 	private final Encoder rightEncoder = RobotMap.driveRightEncoder;
-	
-	private double lastStraightLeftSpeed = 1.00;
-	private double lastStraightRightSpeed = 1.00;
-
 
 	public void initDefaultCommand() {
 	}
 	
 	public void tankDrive(double speed, double steering) {
-		rightFront.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
-		rightBack.changeControlMode(CANTalon.TalonControlMode.Follower);
-		rightBack.set(rightFront.getDeviceID());
+		rightMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+		rightSlave.changeControlMode(CANTalon.TalonControlMode.Follower);
+		rightSlave.set(rightMaster.getDeviceID());
 		
-		leftFront.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
-		leftBack.changeControlMode(CANTalon.TalonControlMode.Follower);
-		leftBack.set(leftFront.getDeviceID());
+		leftMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+		leftSlave.changeControlMode(CANTalon.TalonControlMode.Follower);
+		leftSlave.set(leftMaster.getDeviceID());
 		
 		if(steering == 0) {
-			double gyroRate = this.getGyroRate();
-			if(Math.abs(gyroRate) > RobotMap.allowableGyroError ) {
-				if(gyroRate > 0) {													//If the robot is rotating to the right
-					if(lastStraightLeftSpeed < 1) { 										//If the robot was already steering left to correct
-							lastStraightLeftSpeed += RobotMap.straightSteeringAdjustRate; 		//Increase the speed of the left side to compensate
-					} else { 																//If the robot was already steering straight or steering to the right
-						lastStraightRightSpeed -= RobotMap.straightSteeringAdjustRate;			//Decrease the speed of the right side to compensate
-					}
-					
-				} else {																//If the robot is rotating to the left
-					if(lastStraightRightSpeed < 1) {										//If the robot was already steering right to correct
-						lastStraightRightSpeed += RobotMap.straightSteeringAdjustRate;			//Increase the speed of the right side to compensate
-					} else {																//If the robot was already steering left to correct
-						lastStraightLeftSpeed -= RobotMap.straightSteeringAdjustRate;
-					}
-				}
-			}
-			rightFront.set(lastStraightRightSpeed); //Set the drive motors to the last detected straight speed
-			leftFront.set(lastStraightLeftSpeed);
+			rightMaster.set(speed * RobotMap.driveSpeed); //Set the drive motors to the last detected straight speed
+			leftMaster.set(speed * -1 * RobotMap.driveSpeed);
+		} else if(steering > 0) {
+			leftMaster.set(speed * -1 * RobotMap.driveSpeed);
+			rightMaster.set((speed - (speed * steering * RobotMap.maxSteering)) * RobotMap.driveSpeed);
+		} else if(steering < 0) {
+			rightMaster.set(speed * RobotMap.driveSpeed);
+			leftMaster.set((speed - (speed * steering * RobotMap.maxSteering * -1)) * -1 * RobotMap.driveSpeed);
 		}
 	}
 	
 	public void stationaryTurn(double speed) {
-		rightFront.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
-		rightBack.changeControlMode(CANTalon.TalonControlMode.Follower);
-		rightBack.set(rightFront.getDeviceID());
+		rightMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+		rightSlave.changeControlMode(CANTalon.TalonControlMode.Follower);
+		rightSlave.set(rightMaster.getDeviceID());
 		
-		leftFront.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
-		leftBack.changeControlMode(CANTalon.TalonControlMode.Follower);
-		leftBack.set(leftFront.getDeviceID());
+		leftMaster.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+		leftSlave.changeControlMode(CANTalon.TalonControlMode.Follower);
+		leftSlave.set(leftMaster.getDeviceID());
 		
-		rightFront.set(speed * RobotMap.turnSpeed * -1);
-		leftFront.set(speed * RobotMap.turnSpeed);
+		rightMaster.set(speed * RobotMap.turnSpeed);
+		leftMaster.set(speed * RobotMap.turnSpeed);
+	}
+	
+	public void allStop() {
+		rightMaster.set(0);
+		leftMaster.set(0);
 	}
 	
 	public double getGyroAngle() {
@@ -106,6 +93,14 @@ public class DriveSystem extends Subsystem {
 	public void resetEncoders() {
 		leftEncoder.reset();
 		rightEncoder.reset();
+	}
+	
+	public void calibrateGyro() {
+		gyro.calibrate();
+	}
+	
+	public void resetGyro() {
+		gyro.reset();
 	}
 	
 }
