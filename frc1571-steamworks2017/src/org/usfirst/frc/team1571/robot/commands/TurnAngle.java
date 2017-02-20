@@ -15,27 +15,31 @@ public class TurnAngle extends Command {
     }
 
     protected void initialize() {
-    	isFinished = true;
-    	lastAngle = Robot.driveSystem.getGyroAngle();
+    	isFinished = false;
+    	
+    	Robot.driveSystem.allStop();
+    	Robot.driveSystem.resetGyro();
+    	Robot.driveSystem.calibrateGyro();
+    	
     	turnCommand = new TurnSpeed(speed);
     	turnCommand.start();
+    	
     }
 
     protected void execute() {
     	double currentAngle = Robot.driveSystem.getGyroAngle();
     	if(speed > 0) {
-    		if(lastAngle < angle && currentAngle > angle) {
+    		if(currentAngle > angle) {
     			isFinished = true;
     		}
     	} else if(speed < 0) {
-    		if(lastAngle > angle && currentAngle < angle) {
+    		if(currentAngle < angle) {
     			isFinished = true;
     		}
     	} else {
     		isFinished = true;
     		System.out.print("Warning - Tried to turn to an angle with no speed. Why are you doing this?");
     	}
-    	lastAngle = currentAngle;
     }
 
     protected boolean isFinished() {
@@ -43,7 +47,7 @@ public class TurnAngle extends Command {
     }
 
     protected void end() {
-    	new TurnSpeed(0);
+    	Robot.driveSystem.allStop();;
     }
 
     protected void interrupted() {
