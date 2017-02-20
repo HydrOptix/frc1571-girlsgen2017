@@ -9,108 +9,58 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class LEDSystem extends Subsystem {
 	
-	private SerialPort usbSerial = RobotMap.usbSerial;
+	private SerialPort usbSerial = RobotMap.arduino;
 	private Timer serialTimer;
 
     public void initDefaultCommand() {
     }
     
     public void solid(int r, int g, int b, int wait) {
-    	if(this.serialReady()) {
-	    	this.startSerial();
-	    	usbSerial.writeString("M0"+"R"+r+"G"+g+"B"+b+"W"+wait);
-	    	this.endSerial();
-    	}
+	    sendCommand("M0"+"R"+r+"G"+g+"B"+b+"W"+wait);
     }
     
     public void wipe(int r, int g, int b, int wait) {
-    	if(this.serialReady()) {
-	    	this.startSerial();
-	    	usbSerial.writeString("M1"+"R"+r+"G"+g+"B"+b+"W"+wait);
-	    	this.endSerial();
-    	}
+	    sendCommand("M1"+"R"+r+"G"+g+"B"+b+"W"+wait);
     }
     
     public void wipeContinuous(int r, int g, int b, int wait) {
-    	if(this.serialReady()) {
-	    	this.startSerial();
-	    	usbSerial.writeString("M2"+"R"+r+"G"+g+"B"+b+"W"+wait);
-	    	this.endSerial();
-    	}
+	    sendCommand("M2"+"R"+r+"G"+g+"B"+b+"W"+wait);
     }
     
     public void wipeOscillate(int r, int g, int b, int wait) {
-    	if(this.serialReady()) {
-	    	this.startSerial();
-	    	usbSerial.writeString("M3"+"R"+r+"G"+g+"B"+b+"W"+wait);
-	    	this.endSerial();
-    	}
+	    sendCommand("M3"+"R"+r+"G"+g+"B"+b+"W"+wait);
     }
     
     public void fade(int r, int g, int b, int wait) {
-    	if(this.serialReady()) {
-	    	this.startSerial();
-	    	usbSerial.writeString("M4"+"R"+r+"G"+g+"B"+b+"W"+wait);
-	    	this.endSerial();
-    	}
+    	sendCommand("M4"+"R"+r+"G"+g+"B"+b+"W"+wait);
     }
     
     public void fadeOscillate(int r1, int g1, int b1, int r2, int g2, int b2, int wait) {
-    	if(this.serialReady()) {
-	    	this.startSerial();
-	    	usbSerial.writeString("M5"+"R"+r1+"G"+g1+"B"+b1+"W"+wait);
-	    	this.endSerial();
-	    	this.startSerial();
-	    	usbSerial.writeString("R"+r2+"G"+g2+"B"+b2);
-	    	this.endSerial();
-    	}
+    	sendCommand("M5"+"R"+r1+"G"+g1+"B"+b1+"W"+wait);
+    	sendCommand("R"+r2+"G"+g2+"B"+b2);
     }
     
     public void theaterChase(int r, int g, int b, int wait) {
-    	if(this.serialReady()) {
-	    	this.startSerial();
-	    	usbSerial.writeString("M6"+"R"+r+"G"+g+"B"+b+"W"+wait);
-	    	this.endSerial();
-    	}
+	    sendCommand("M6"+"R"+r+"G"+g+"B"+b+"W"+wait);
     }
     
     public void rainbow(int wait) {
-    	if(this.serialReady()) {
-	    	this.startSerial();
-	    	usbSerial.writeString("M7"+"W"+wait);
-	    	this.endSerial();
-    	}
+	    sendCommand("M7"+"W"+wait);
     }
     
     public void rainbowCycle(int wait) {
-    	if(this.serialReady()) {
-	    	this.startSerial();
-	    	usbSerial.writeString("M8"+"W"+wait);
-	    	this.endSerial();
-    	}
+	    sendCommand("M8"+"W"+wait);
     }
     
     public void theaterChaseRainbow(int wait) {
-    	if(this.serialReady()) {
-	    	this.startSerial();
-	    	usbSerial.writeString("M9"+"W"+wait);
-	    	this.endSerial();
-    	}
-    }
-    
-    public void startSerial() {
-    	usbSerial.writeString("S");
-    	
-    }
-    
-    public void endSerial() {
-    	usbSerial.writeString("F");
+	    sendCommand("M9"+"W"+wait);
     }
     
     public boolean serialReady() {
     	if(serialTimer == null) {
     		serialTimer = new Timer();
     		serialTimer.start();
+    		return true;
     	}
     	
     	if(serialTimer.hasPeriodPassed(RobotMap.serialDelay)) {
@@ -120,5 +70,14 @@ public class LEDSystem extends Subsystem {
     	}
     }
     
+    public void sendCommand(String out) {
+    	if(serialReady()) {
+	    	try {
+	    		usbSerial.writeString("S" + out + "F");
+	    	} catch (RuntimeException e) {
+				System.err.println("Caught SerialPort RuntimeException: " + e.getMessage());
+	    	}
+    	}
+    }
 }
 
