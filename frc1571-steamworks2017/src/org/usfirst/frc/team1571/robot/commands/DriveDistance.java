@@ -4,9 +4,6 @@ import org.usfirst.frc.team1571.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-/**
- *
- */
 public class DriveDistance extends Command {
 	
 	private boolean isFinished;
@@ -29,10 +26,10 @@ public class DriveDistance extends Command {
 
     protected void execute() {
     	
-    	double leftCounts = Robot.driveSystem.getEncoderDistance("LEFT");
-    	double rightCounts = Robot.driveSystem.getEncoderDistance("RIGHT");
+    	double leftDistance = Robot.driveSystem.getEncoderDistance("LEFT");
+    	double rightDistance = Robot.driveSystem.getEncoderDistance("RIGHT");
     	
-    	if((leftCounts + rightCounts)/2 >= distance) {
+    	if((leftDistance + rightDistance)/2 >= distance) {
     		isFinished = true;
     	}
     }
