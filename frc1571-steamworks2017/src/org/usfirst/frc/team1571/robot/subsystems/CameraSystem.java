@@ -1,15 +1,11 @@
 package org.usfirst.frc.team1571.robot.subsystems;
 
-import org.usfirst.frc.team1571.robot.Robot;
 import org.usfirst.frc.team1571.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
-/**
- *
- */
 public class CameraSystem extends Subsystem {
 
 	private final Relay ringLight = RobotMap.ringLight;
@@ -19,9 +15,8 @@ public class CameraSystem extends Subsystem {
     }
     
     public double getTargetDistance() {
-    	double targetAngle = (tiltServo.get()-RobotMap.cameraTiltMinPos)/(RobotMap.cameraTiltMaxPos-RobotMap.cameraTiltMinPos)*RobotMap.cameraTiltMaxAngle+RobotMap.cameraTiltMinAngle;
-		double targetDistance = RobotMap.cameraAngleFunctionA * Math.pow(targetAngle, 2) + RobotMap.cameraAngleFunctionB * targetAngle + RobotMap.cameraAngleFunctionC;
-		return targetDistance;
+    	double targetPos = tiltServo.get();
+		return RobotMap.cameraAngleFunctionA * Math.pow(targetPos, 2) + RobotMap.cameraAngleFunctionB * targetPos + RobotMap.cameraAngleFunctionC;
     }
     
     public void activateLightRing() {
