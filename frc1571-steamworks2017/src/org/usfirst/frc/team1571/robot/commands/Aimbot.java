@@ -5,7 +5,6 @@ import org.usfirst.frc.team1571.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class Aimbot extends Command {
@@ -34,6 +33,7 @@ public class Aimbot extends Command {
     	
     	yWait = new Timer();
     	xWait = new Timer();
+    	Robot.cameraSystem.activateLightRing();
     }
 
     protected void execute() {
@@ -42,26 +42,28 @@ public class Aimbot extends Command {
     	
     	if(centerY.length == 2) {
     		Robot.cameraSystem.activateLightRing();
+
+
     		
-    		if(!yCentered) {	//If we have already centered the servo, we don't really want to move it. Slight movements could uncenter the camera, but mechanical parts should smooth out the inconsistencies
-	    		double averageY = (centerY[0] + centerY[1])/2;
-	    		
+    		if(!yCentered && centerY.length == 2) {	//If we have already centered the servo, we don't really want to move it. Slight movements could uncenter the camera, but mechanical parts should smooth out the inconsistencies
+        		double averageY = (centerY[0] + centerY[1])/2;
+
 	    		if(RobotMap.cameraPixelHeight/2 + RobotMap.cameraAllowablePixelError > averageY && averageY > RobotMap.cameraPixelHeight/2 - RobotMap.cameraAllowablePixelError) {	//If the camera is centered
-	    			if(ySpeed == 0) { 	//If the last time we checked the camera was no longer moving
-	    				if(yWait.get() >= .5) {	//If the camera has been stationary for a half second (the camera could continue moving even after the command to stop moving has been issued)
-	    					yWait.stop();		//Stop the timer
-	    					yCentered = true;	//Mark the Y axis as centered;
-	    					System.out.println("Camera: Y is centered");
-	    				}
-	    			} else {			//If the camera was moving last loop
-	    				ySpeed = 0;		//Mark the camera as not moving
-	    				yWait.reset();
-	    				yWait.start();	//Start the countdown to the stationary target
+	    			double servoAngle = Robot.cameraSystem.getCameraServo();
+	    			if(servoAngle > .855 && servoAngle < .86) {
+	    				Robot.driveSystem.allStop();
+	    				yCentered = true;
+	    			} else if(servoAngle > .86) {
+	    				Robot.driveSystem.tankDrive(-.2, 0);
+	    			} else {
+	    				Robot.driveSystem.tankDrive(.2, 0);
 	    			}
 	    			
 	    			
-	    		} else if(averageY > RobotMap.cameraPixelHeight/2 + RobotMap.cameraAllowablePixelError) { //If the camera is lower than the target (Remember Y=0 starts at the top of the image)
-	    			if(averageY < RobotMap.cameraPixelHeight/2 + RobotMap.cameraSlowZonePixels) { //If the camera is inside than slow-moving zone
+	    		} else if(averageY < RobotMap.cameraPixelHeight/2 + RobotMap.cameraAllowablePixelError) { //If the camera is lower than the target (Remember Y=0 starts at the top of the image)
+	    			Robot.driveSystem.allStop();
+	    			
+	    			if(averageY > RobotMap.cameraPixelHeight/2 + RobotMap.cameraSlowZonePixels) { //If the camera is inside than slow-moving zone
 	    				ySpeed = RobotMap.cameraTiltSlowIncrementRate; //Positive = camera moves up
 	    				System.out.print("Camera: Tilting up " + RobotMap.cameraTiltSlowIncrementRate);
 	    			} else {
@@ -70,8 +72,10 @@ public class Aimbot extends Command {
 	    			}
 	    			
 	    			
-	    		} else if(averageY < RobotMap.cameraPixelHeight/2 - RobotMap.cameraAllowablePixelError) {	//If the camera is higher than the target
-	    			if(averageY > RobotMap.cameraPixelHeight/2 - RobotMap.cameraSlowZonePixels) { //If the camera is inside than slow-moving zone
+	    		} else if(averageY > RobotMap.cameraPixelHeight/2 - RobotMap.cameraAllowablePixelError) {	//If the camera is higher than the target
+	    			Robot.driveSystem.allStop();
+	    			
+	    			if(averageY < RobotMap.cameraPixelHeight/2 - RobotMap.cameraSlowZonePixels) { //If the camera is inside than slow-moving zone
 	    				ySpeed = RobotMap.cameraTiltSlowIncrementRate * -1; //Negative = camera moves down
 	    				System.out.print("Camera: Tilting down " + RobotMap.cameraTiltSlowIncrementRate);
 	    			} else {
@@ -90,12 +94,13 @@ public class Aimbot extends Command {
 	    		
     		}
     		
-    		if(!xCentered) {
-	    		double averageX = (centerX[0] + centerX[1])/2;
+    		if(!xCentered && centerX.length == 2) {
+        		double averageX = (centerX[0] + centerX[1])/2;
+
 	    		
 	    		if(RobotMap.visionTargetXCenter + RobotMap.cameraAllowablePixelError > averageX && averageX > RobotMap.visionTargetXCenter - RobotMap.cameraAllowablePixelError) {
 	    			if(xSpeed == 0) {
-	    				if(xWait.get() >= .5) {
+	    				if(xWait.get() >= .5 && yCentered) {
 	    					xWait.stop();
 	    					xCentered = true;
 	    					System.out.println("Camera: X is centered");
@@ -107,29 +112,25 @@ public class Aimbot extends Command {
 	    			}
 	    		} else if(averageX > RobotMap.visionTargetXCenter + RobotMap.cameraAllowablePixelError) {	//If the camera is too far to the right of the target
 	    			if(averageX < RobotMap.visionTargetXCenter + RobotMap.cameraSlowZonePixels) {	//If the camera is inside than slow-moving zone
-	    				xSpeed = RobotMap.driveAimbotSlowSpeed * -1;	//Negative = robot turns left
+	    				xSpeed = RobotMap.driveAimbotSlowSpeed;	//Negative = robot turns left
 	    				System.out.println("Camera: Turning left at " + (RobotMap.driveAimbotSlowSpeed * 100) + "% speed");
 	    			} else {
-	    				xSpeed = RobotMap.driveAimbotFastSpeed * -1;
+	    				xSpeed = RobotMap.driveAimbotFastSpeed;
 	    				System.out.println("Camera: Turning left at " + (RobotMap.driveAimbotFastSpeed * 100) + "% speed");
 	    			}
 	    			
 	    			
 	    		} else if(averageX < RobotMap.visionTargetXCenter - RobotMap.cameraAllowablePixelError) {	//If the camera is too far to the left of the target
 	    			if(averageX > RobotMap.visionTargetXCenter - RobotMap.cameraSlowZonePixels) {	//If the camera is inside than slow-moving zone
-	    				xSpeed = RobotMap.driveAimbotSlowSpeed; //Positive = robot turns right
+	    				xSpeed = RobotMap.driveAimbotSlowSpeed * -1; //Positive = robot turns right
 	    				System.out.println("Camera: Turning right at " + (RobotMap.driveAimbotSlowSpeed * 100) + "% speed");
 	    			} else {
-	    				xSpeed = RobotMap.driveAimbotFastSpeed;
+	    				xSpeed = RobotMap.driveAimbotFastSpeed * -1;
 	    				System.out.println("Camera: Turning right at " + (RobotMap.driveAimbotFastSpeed * 100) + "% speed");
 	    			}
 	    		}
 	    		
-	    		Robot.driveSystem.stationaryTurn(xSpeed);
-	    		
-	    		double xDifference = RobotMap.visionTargetXCenter - averageX;
-	    		
-	    		Robot.oi.driverController.setRumble(RumbleType.kRightRumble, (xDifference-RobotMap.cameraPixelWidth/-2)/RobotMap.cameraPixelWidth);
+	    		Robot.driveSystem.stationaryTurn(xSpeed);	    		
     		}
     		
     		
@@ -151,11 +152,13 @@ public class Aimbot extends Command {
     	}
     	
     	if(xCentered && yCentered) {
-    		double shootSpeed = Robot.shooter.getSpeedFromDistance(Robot.cameraSystem.getTargetDistance());
-    		Robot.shooter.setVelocity(shootSpeed);
+    		double speedFromDistance = 300;
+    		
+    		Robot.shooter.setVelocity(speedFromDistance/.85);
     		
     		double shooterVelocity = Robot.shooter.getVelocity();
-    		if(shootSpeed + RobotMap.shooterSpeedError > shooterVelocity && shooterVelocity > shootSpeed - RobotMap.shooterSpeedError) {
+    		System.out.println("Current Speed at " + shooterVelocity);
+    		if(speedFromDistance + RobotMap.shooterSpeedError > shooterVelocity && shooterVelocity > speedFromDistance - RobotMap.shooterSpeedError) {
     			Robot.feeder.startFeeder();
     			Robot.agitator.startAgitator();
     		} else {
@@ -177,6 +180,7 @@ public class Aimbot extends Command {
     	Robot.agitator.stopAgitator();
     	Robot.cameraSystem.DeactivateLightRing();
     	Robot.cameraSystem.setCameraServo(RobotMap.cameraTiltDefaultPos);
+
     	
     	if(RobotState.isOperatorControl()) {
     		Robot.joystickCommand.start();
