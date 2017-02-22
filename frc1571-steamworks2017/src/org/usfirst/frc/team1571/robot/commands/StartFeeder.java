@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 public class StartFeeder extends InstantCommand {
 
     public StartFeeder() {
+    	requires(Robot.feeder);
     }
 
     protected void initialize() {
