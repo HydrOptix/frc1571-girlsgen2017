@@ -28,19 +28,19 @@ public class RobotMap {
 		
 		
 		public static double cameraAngleFunctionA = 0;
-		public static double cameraAngleFunctionB = -0.578;
-		public static double cameraAngleFunctionC = 29.0;
+		public static double cameraAngleFunctionB = -70.544;
+		public static double cameraAngleFunctionC = 67.067;
 		
 		public static double cameraPixelHeight = 480;
 		public static double cameraPixelWidth = 640;
 		
-		public static int cameraAllowablePixelError = 10;
-		public static int cameraSlowZonePixels = 64;
-		public static double cameraTiltFastIncrementRate = .00005;
-		public static double cameraTiltSlowIncrementRate = .00002;
+		public static int cameraAllowablePixelError = 4;
+		public static int cameraSlowZonePixels = 200;
+		public static double cameraTiltFastIncrementRate = .001;
+		public static double cameraTiltSlowIncrementRate = .001;
 		public static double cameraTiltScanIncrementRate = .01;
 		
-		public static int visionTargetXCenter = 640/2; //If the shooter is slightly off-center, set the center for the vision target to this pixel
+		public static int visionTargetXCenter = 350; //If the shooter is slightly off-center, set the center for the vision target to this pixel
 		
 	
 	//Climber components and variables
@@ -60,8 +60,8 @@ public class RobotMap {
 	public static Encoder driveRightEncoder;
 		public static double wheelDiameter = .5; //Wheel diameter in feet. Used to calculate distance the robot is traveling
 		public static double gearRatio = 10/1; //Gear ratio from encoder to wheel. Used to calculate distance the robot is traveling
-		public static int countsPerRevolution = 20; //The number of counts the encoder outputs per revolution (don't forget to multiply by the encoding factor)
-		public static double distancePerCount = (Math.PI * wheelDiameter)/(gearRatio * countsPerRevolution);
+		public static int countsPerRevolution = 80; //The number of counts the encoder outputs per revolution (don't forget to multiply by the encoding factor)
+		public static double distancePerCount = (gearRatio * countsPerRevolution)/(Math.PI * wheelDiameter);
 	
 	/* The max steering radius of the robot on a scale of 0 to 2.
 	0 means the robot doesn't turn (E.G. Sean Jim mode). Don't set it to 0.
@@ -82,8 +82,8 @@ public class RobotMap {
 	 * 1 means the robot operates at 100% speed while driving.*/
 	public static double driveSpeed = -1.00;
 		
-	public static double driveAimbotFastSpeed = .5;
-	public static double driveAimbotSlowSpeed = .1;
+	public static double driveAimbotFastSpeed = .15;
+	public static double driveAimbotSlowSpeed = .05;
 	
 	//Feeder components and variables
 	public static CANTalon feederTalon;
@@ -108,15 +108,15 @@ public class RobotMap {
 	//Shooter components and variables
 	public static CANTalon shooterTalon;
 		public static double shooterSpeed = 1.00;
-		public static double shooterSpeedFunctionA = -.01;	//These are the coefficients for a parabolic velocity function (y=Ax^2+Bx+C) used to calculate the speed needed to shoot the ball far enough.
-		public static double shooterSpeedFunctionB = 1.236;	//Example functions that we used in 2017 can be found at https://docs.google.com/spreadsheets/d/1XohjcKDPCyi3CSsj_TRhFFEKfISIe4YYJaIspVYB7Hk/
-		public static double shooterSpeedFunctionC = 18.202;//If you look at the results chart, Google Sheets has calculated a parabolic function for each line. Us the numbers before each x for these values.
+		public static double shooterSpeedFunctionA = .048;	//These are the coefficients for a parabolic velocity function (y=Ax^2+Bx+C) used to calculate the speed needed to shoot the ball far enough.
+		public static double shooterSpeedFunctionB = 10.262;	//Example functions that we used in 2017 can be found at https://docs.google.com/spreadsheets/d/1XohjcKDPCyi3CSsj_TRhFFEKfISIe4YYJaIspVYB7Hk/
+		public static double shooterSpeedFunctionC = 215.143;//If you look at the results chart, Google Sheets has calculated a parabolic function for each line. Us the numbers before each x for these values.
 		
-		public static double shooterP = 1;
+		public static double shooterP = 10;
 		public static double shooterI = 0;
 		public static double shooterD = 0;
 		
-		public static double shooterSpeedError = 0;
+		public static double shooterSpeedError = 5;
 			
 	//Other various global variables
 	public static boolean driving; //variable used to determine whether the shooter joystick should be used for aiming
@@ -154,11 +154,9 @@ public class RobotMap {
 			
 		driveLeftEncoder = new Encoder(0, 1, false, Encoder.EncodingType.k4X);
 			LiveWindow.addSensor("Drive System", "Right Steering Encoder", driveLeftEncoder);
-			driveLeftEncoder.setDistancePerPulse(distancePerCount);
 			
 		driveRightEncoder = new Encoder(2, 3, true, Encoder.EncodingType.k4X);
 			LiveWindow.addSensor("Drive System", "Right Steering Encoder", driveRightEncoder);
-			driveRightEncoder.setDistancePerPulse(distancePerCount);
 			
 			
 		//Feeder components
@@ -184,6 +182,7 @@ public class RobotMap {
 		shooterTalon = new CANTalon(8);
 			LiveWindow.addActuator("Shooter", "Flywheel", shooterTalon);
 			shooterTalon.changeControlMode(CANTalon.TalonControlMode.Speed);
+			shooterTalon.setVoltageRampRate(1);
 			shooterTalon.reverseOutput(false);
 			shooterTalon.setAllowableClosedLoopErr(0);
 			shooterTalon.enableBrakeMode(false);
