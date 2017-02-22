@@ -9,7 +9,8 @@ public class TurnAngle extends Command {
 	boolean isFinished = false;
 	TurnSpeed turnCommand;
 
-    public TurnAngle(double speed, double angle) {
+    public TurnAngle(double angle, double speed) {
+    	requires(Robot.driveSystem);
     	this.speed = speed;
     	this.angle = angle;
     }
@@ -17,19 +18,20 @@ public class TurnAngle extends Command {
     protected void initialize() {
     	isFinished = false;
     	
+    	if(angle < 0) {
+    		speed = speed * -1;
+    	}
+    	
     	Robot.driveSystem.allStop();
     	Robot.driveSystem.resetGyro();
-    	Robot.driveSystem.calibrateGyro();
-    	
-    	turnCommand = new TurnSpeed(speed);
-    	turnCommand.start();
-    	
     }
 
     protected void execute() {
+    	Robot.driveSystem.stationaryTurn(speed);
     	double currentAngle = Robot.driveSystem.getGyroAngle();
+    	System.out.println("Current Angle: " + currentAngle + ", Target Angle: " + angle);
     	if(speed > 0) {
-    		if(currentAngle > angle) {
+    		if(currentAngle >= angle) {
     			isFinished = true;
     		}
     	} else if(speed < 0) {
