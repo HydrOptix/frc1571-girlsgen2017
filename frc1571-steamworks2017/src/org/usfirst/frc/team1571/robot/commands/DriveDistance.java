@@ -1,6 +1,7 @@
 package org.usfirst.frc.team1571.robot.commands;
 
 import org.usfirst.frc.team1571.robot.Robot;
+import org.usfirst.frc.team1571.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -17,20 +18,28 @@ public class DriveDistance extends Command {
     }
 
     protected void initialize() {
+    	distance = distance * RobotMap.countsPerRevolution;
     	isFinished = false;
-    	driveSpeedCommand = new DriveSpeed(speed, steering);
-    	driveSpeedCommand.start();
-    	
     	Robot.driveSystem.resetEncoders();
     }
 
     protected void execute() {
     	
+    	
     	double leftDistance = Robot.driveSystem.getEncoderDistance("LEFT");
     	double rightDistance = Robot.driveSystem.getEncoderDistance("RIGHT");
     	
+    	System.out.println("Left: " + leftDistance);
+    	System.out.println("Right: " + rightDistance);
+    	
+    	System.out.println("At distance" + (leftDistance + rightDistance)/2);
+    	System.out.println("To distance" + distance);
+    	
     	if((leftDistance + rightDistance)/2 >= distance) {
+    		Robot.driveSystem.allStop();
     		isFinished = true;
+    	} else {
+        	Robot.driveSystem.tankDrive(speed, steering);
     	}
     }
 
@@ -39,7 +48,7 @@ public class DriveDistance extends Command {
     }
 
     protected void end() {
-    	driveSpeedCommand.end();
+    	Robot.driveSystem.allStop();
     }
 
     protected void interrupted() {
