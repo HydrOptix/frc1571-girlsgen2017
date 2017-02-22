@@ -3,6 +3,7 @@ package org.usfirst.frc.team1571.robot.subsystems;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.usfirst.frc.team1571.robot.RobotMap;
 
@@ -42,6 +43,7 @@ public class DriveSystem extends Subsystem {
 			rightMaster.set(speed * RobotMap.driveSpeed);
 			leftMaster.set((speed - (speed * steering * RobotMap.maxSteering * -1)) * -1 * RobotMap.driveSpeed);
 		}
+		
 	}
 	
 	public void stationaryTurn(double speed) {
@@ -101,6 +103,12 @@ public class DriveSystem extends Subsystem {
 	
 	public void resetGyro() {
 		gyro.reset();
+	}
+	
+	public void report() {
+		SmartDashboard.putNumber("Left Drive Encoder", leftEncoder.get());
+		SmartDashboard.putNumber("Right Drive Encoder", rightEncoder.get());
+		SmartDashboard.putNumber("Gyro Angle", getGyroAngle());
 	}
 	
 }
