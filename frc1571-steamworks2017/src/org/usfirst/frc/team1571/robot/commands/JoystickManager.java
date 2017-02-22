@@ -4,7 +4,6 @@ import org.usfirst.frc.team1571.robot.Robot;
 import org.usfirst.frc.team1571.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 
 public class JoystickManager extends Command {
@@ -30,7 +29,6 @@ public class JoystickManager extends Command {
     	double auxTwistAxis = Robot.oi.auxJoystick.getRawAxis(2);
     	double auxThrottle = (Robot.oi.auxJoystick.getRawAxis(3)-1)/-2;
     	boolean driverButtonX = Robot.oi.driverButtonX.get();
-    	boolean driverButtonRightBumper = Robot.oi.driverButtonRightBumper.get();
     	boolean auxButtonTrigger = Robot.oi.auxButtonTrigger.get();
     	boolean auxButtonSecondary = Robot.oi.auxButtonSecondary.get();
 
@@ -61,20 +59,19 @@ public class JoystickManager extends Command {
     		Robot.driveSystem.tankDrive(driveThrottle, driverXLeft);
     		
     		if(driveThrottle > 1) {
-    			Robot.ledSystem.theaterChase(0, 255, 0, (int)((driveThrottle - 1)/-1 * 40));
+    			//Robot.ledSystem.theaterChase(0, 255, 0, (int)((driveThrottle - 1)/-1 * 40));
     		} else {
-    			Robot.ledSystem.theaterChase(255, 0, 0, (int)((driveThrottle + 1) * 40));
+    			//Robot.ledSystem.theaterChase(255, 0, 0, (int)((driveThrottle + 1) * 40));
     		}
     	} else if(driverXLeft != 0) {
     		double turnThrottle = driverXLeft;
     		System.out.println("Turning at " + driverXLeft);
     		Robot.driveSystem.stationaryTurn(turnThrottle);
     		
-    		Robot.ledSystem.rainbowCycle((int)((Math.abs(turnThrottle) -1)/-1 * 40));
+    		//Robot.ledSystem.rainbowCycle((int)((Math.abs(turnThrottle) -1)/-1 * 40));
     	} else if(auxTwistAxis != 0){
     		Robot.driveSystem.stationaryTurn(auxTwistAxis * .25);
     	} else {
-    		System.out.println("Stopping");
     		Robot.driveSystem.allStop();
     	}
     	
