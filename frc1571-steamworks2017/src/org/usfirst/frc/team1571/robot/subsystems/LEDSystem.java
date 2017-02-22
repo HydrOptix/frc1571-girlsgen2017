@@ -1,9 +1,9 @@
 package org.usfirst.frc.team1571.robot.subsystems;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
-
 import org.usfirst.frc.team1571.robot.RobotMap;
 
+import org.usfirst.frc.team1571.robot.commands.*;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Timer;
 
