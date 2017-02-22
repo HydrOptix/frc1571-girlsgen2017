@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 public class StopFeeder extends InstantCommand {
 
     public StopFeeder() {
+    	requires(Robot.feeder);
     }
 
     // Called once when the command executes
