@@ -7,15 +7,15 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 /**
  *
  */
-public class ToggleFeeder extends InstantCommand {
+public class ToggleIntake extends InstantCommand {
 
-    public ToggleFeeder() {
-        requires(Robot.feeder);
+    public ToggleIntake() {
+        requires(Robot.intake);
     }
 
     // Called once when the command executes
     protected void initialize() {
-    	Robot.feeder.toggleFeeder();
+    	Robot.intake.toggleIntake();
     }
 
 }
