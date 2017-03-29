@@ -38,10 +38,10 @@ public class DriveSystem extends Subsystem {
 			leftMaster.set(speed * -1 * RobotMap.driveSpeed);
 		} else if(steering > 0) {
 			leftMaster.set(speed * -1 * RobotMap.driveSpeed);
-			rightMaster.set((speed - (speed * steering * RobotMap.maxSteering)) * RobotMap.driveSpeed);
+			rightMaster.set((speed - (Math.abs(speed) * steering * RobotMap.maxSteering)) * RobotMap.driveSpeed);
 		} else if(steering < 0) {
 			rightMaster.set(speed * RobotMap.driveSpeed);
-			leftMaster.set((speed - (speed * steering * RobotMap.maxSteering * -1)) * -1 * RobotMap.driveSpeed);
+			leftMaster.set((speed - (Math.abs(speed) * steering * RobotMap.maxSteering * -1)) * -1 * RobotMap.driveSpeed);
 		}
 		
 	}
@@ -72,7 +72,7 @@ public class DriveSystem extends Subsystem {
 		return gyro.getRate();
 	}
 	
-	public double getEncoderCounts(String side) {
+	public int getEncoderCounts(String side) {
 		if(side == "LEFT") {
 			return leftEncoder.get();
 		} else if(side == "RIGHT") {
