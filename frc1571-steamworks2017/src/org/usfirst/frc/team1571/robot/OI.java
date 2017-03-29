@@ -55,6 +55,7 @@ public class OI {
 		
 	public JoystickButton auxButtonTrigger;
 	public JoystickButton auxButtonSecondary;
+	public JoystickButton auxButton7;
 	
 	public OI() {
 		
@@ -62,18 +63,16 @@ public class OI {
 		auxJoystick = new Joystick(1);
 		
 		driverButtonA = new JoystickButton(driverController, 1);
-			driverButtonA.whenPressed(new ToggleIntake());
+			driverButtonA.whenPressed(new GearOpen());
 			
 		driverButtonX = new JoystickButton(driverController, 3);
-			driverButtonX.whenPressed(new StartClimber());
-			driverButtonX.whenReleased(new StopClimber());
+			driverButtonX.whenPressed(new GearClose());
 			
 		driverButtonRightBumper = new JoystickButton(driverController, 5);
-			driverButtonRightBumper.whileHeld(new Aimbot());
-			driverButtonRightBumper.whenReleased(new JoystickManager());
 			
 		auxButtonTrigger = new JoystickButton(auxJoystick, 1);
 		auxButtonSecondary = new JoystickButton(auxJoystick, 2);
+		auxButton7 = new JoystickButton(auxJoystick, 7);
 		
 		//SmartDashboard buttons
 		SmartDashboard.putData("Joystick Manager Command", new JoystickManager());
