@@ -5,10 +5,11 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 /**
  *
  */
-public class AutoBlueLeft extends CommandGroup {
+public class AutoLeft extends CommandGroup {
 
-    public AutoBlueLeft() {
-        addSequential(new DriveDistance(7,1,0));
-        addSequential(new TurnAngle(-145,1));
+    public AutoLeft() {
+        addSequential(new DriveDistance(2,1,0));
+        addSequential(new TurnAngle(-30,.5));
+        addSequential(new Gearbot());
     }
 }
