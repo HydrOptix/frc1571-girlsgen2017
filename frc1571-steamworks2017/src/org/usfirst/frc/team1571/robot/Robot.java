@@ -60,7 +60,9 @@ public class Robot extends IterativeRobot {
 		oi = new OI();
 		
 		//add all autonomous commands to the SmartDashboard Chooser object
-		autoChooser.addDefault("Autodetect Station Auto", new AutoRedCenter());
+		autoChooser.addDefault("Center Auto", new AutoCenter());
+		autoChooser.addObject("Left Auto", new AutoLeft());
+		autoChooser.addObject("Right Auto", new AutoRight());
 		SmartDashboard.putData("Auto mode", autoChooser);
 		
 		//Add all susbsystem information to the SmartDashboard
