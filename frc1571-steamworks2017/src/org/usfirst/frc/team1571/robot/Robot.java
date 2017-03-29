@@ -19,12 +19,13 @@ public class Robot extends IterativeRobot {
 	Command autonomousCommand;
 	public static Command joystickCommand;
 
+	//Declare all subsystems for easy access
 	public static Agitator agitator;
 	public static CameraSystem cameraSystem;
 	public static Climber climber;
 	public static DriveSystem driveSystem;
 	public static Feeder feeder;
-	public static GearSwitch gearSwitch;
+	public static GearSystem gearSystem;
 	public static Intake intake;
 	public static LEDSystem ledSystem;
 	public static PowerDistributionSystem powerDistributionSystem;
@@ -44,28 +45,25 @@ public class Robot extends IterativeRobot {
 		visionTable = NetworkTable.getTable("GRIP/GRIPContours");
 		RobotMap.init();
 		
+		//Initialize new subsystems
 		agitator = new Agitator();
 		cameraSystem = new CameraSystem();
 		climber = new Climber();
 		driveSystem = new DriveSystem();
 		feeder = new Feeder();
-		gearSwitch = new GearSwitch();
+		gearSystem = new GearSystem();
 		intake = new Intake();
 		ledSystem = new LEDSystem();
 		powerDistributionSystem = new PowerDistributionSystem();
 		shooter = new Shooter();
 		
 		oi = new OI();
-				
-		autoChooser.addDefault("Autodetect Station Auto", new AutoBlueCenter());
-		autoChooser.addObject("Blue Center Auto", new AutoBlueCenter());
-		autoChooser.addObject("Blue Left Auto", new AutoBlueLeft());
-		autoChooser.addObject("Blue Right Auto", new AutoBlueRight());
-		autoChooser.addObject("Red Center Auto", new AutoRedCenter());
-		autoChooser.addObject("Red Left Auto", new AutoRedLeft());
-		autoChooser.addObject("Red Right Auto", new AutoRedRight());
+		
+		//add all autonomous commands to the SmartDashboard Chooser object
+		autoChooser.addDefault("Autodetect Station Auto", new AutoRedCenter());
 		SmartDashboard.putData("Auto mode", autoChooser);
 		
+		//Add all susbsystem information to the SmartDashboard
 		SmartDashboard.putData(agitator);
 		SmartDashboard.putData(cameraSystem);
 		SmartDashboard.putData(climber);
@@ -90,31 +88,42 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void autonomousInit() {
+		//Get the autonomous command from the SmartDashboard
 		autonomousCommand = autoChooser.getSelected();
 
+		//Start the chosen autonomous command
 		if (autonomousCommand != null)
 			autonomousCommand.start();
 	}
 
 	@Override
 	public void autonomousPeriodic() {
+		//Check the preferences NetworkTable for updated values
 		RobotMap.updatePreferences(preferencesTable);
+		
+		//Run the scheduler (runs scheduled commands)
 		Scheduler.getInstance().run();
 	}
 
 	@Override
 	public void teleopInit() {
+		//Create a JoystickManager command
 		joystickCommand = new JoystickManager();
 		
+		//Cancel the autonomous command if it's still running
 		if (autonomousCommand != null)
 			autonomousCommand.cancel();
 		
+		//Start the joystick manager
 		joystickCommand.start();
 	}
 
 	@Override
 	public void teleopPeriodic() {
+		//Check the preferences NetworkTable for updated values
 		RobotMap.updatePreferences(preferencesTable);
+		
+		//Run the scheduler (runs scheduled commands)
 		Scheduler.getInstance().run();
 	}
 

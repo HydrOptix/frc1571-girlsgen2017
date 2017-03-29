@@ -17,7 +17,7 @@ public class RobotMap {
 	
 	//Agitator components and variables
 	public static CANTalon agitatorTalon;
-		public static double agitatorSpeed = 1.00;
+		public static double agitatorSpeed = 1.00;	//Speed the agitator runs (-1 to 1)
 	
 	//CameraSystem components and variables
 	public static Relay ringLight;
@@ -27,25 +27,25 @@ public class RobotMap {
 		public static double cameraTiltMaxPos = 1;		//The maximum position the camera will tilt to. Sometimes you don't want the camera to rotate upside down.
 		
 		
-		public static double cameraAngleFunctionA = 0;
-		public static double cameraAngleFunctionB = -70.544;
-		public static double cameraAngleFunctionC = 67.067;
+		public static double cameraAngleFunctionA = 0;			//Ended up going unused due to lack of time for testing
+		public static double cameraAngleFunctionB = -70.544;	//Ended up going unused due to lack of time for testing
+		public static double cameraAngleFunctionC = 67.067;		//Ended up going unused due to lack of time for testing
 		
-		public static double cameraPixelHeight = 480;
-		public static double cameraPixelWidth = 640;
+		public static double cameraPixelHeight = 480;			//Height of the camera input
+		public static double cameraPixelWidth = 640;			//Width of the camera input
 		
-		public static int cameraAllowablePixelError = 4;
-		public static int cameraSlowZonePixels = 200;
-		public static double cameraTiltFastIncrementRate = .001;
-		public static double cameraTiltSlowIncrementRate = .001;
-		public static double cameraTiltScanIncrementRate = .01;
+		public static int cameraAllowablePixelError = 10;		//Number of pixels the vision target is allowed to be off by
+		public static int cameraSlowZonePixels = 200;			//Number of pixels in the slow-moving more accurate zone
+		public static double cameraTiltFastIncrementRate = .001;//Amount by which the servo increments when moving quickly (servo ranges from 0 to 1)
+		public static double cameraTiltSlowIncrementRate = .001;//Amount by which the servo increments when moving slowly
+		public static double cameraTiltScanIncrementRate = .01;	//Amount by which the servo increments when scanning for the target (not sure if scanning actually works right now)
 		
 		public static int visionTargetXCenter = 350; //If the shooter is slightly off-center, set the center for the vision target to this pixel
 		
 	
 	//Climber components and variables
 	public static CANTalon climberTalon;
-		public static double climbSpeed = -1.00;
+		public static double climbSpeed = -1.00;				//Speed the climber runs (-1 to 1)
 	
 	//DriveSystem components and variables
 	public static CANTalon driveTalonRightMaster;
@@ -81,52 +81,52 @@ public class RobotMap {
 	 * 0 means the robot doesn't drive forward. Don't set this to 0.
 	 * 1 means the robot operates at 100% speed while driving.*/
 	public static double driveSpeed = -1.00;
-		
-	public static double driveAimbotFastSpeed = .15;
-	public static double driveAimbotSlowSpeed = .05;
+	
+	public static double driveAimbotFastSpeed = .15;	//Speed the robot turns when moving quickly to center the vision target
+	public static double driveAimbotSlowSpeed = .05;	//Speed the robot turns when moving more accurately to center the vision target
 	
 	//Feeder components and variables
 	public static CANTalon feederTalon;
-		public static double feederSpeed = 0.30;
+		public static double feederSpeed = 0.50;		//Speed the robot runs the feeder (-1 to 1)
 		
 	//GearSwitch components and variables
-	public static DigitalInput gearSwitch;
-		public static boolean reverseGearSwitch = false;
-		public static double gearRemoveDelay = 1.0;
+	public static DigitalInput gearOpenSwitch;
+	public static DigitalInput gearClosedSwitch;
+		public static boolean reverseGearOpenSwitch = false;
+		public static boolean reverseGearClosedSwitch = false;
+		
+	public static CANTalon gearArm;
 	
 	//Intake components and variables
 	public static CANTalon intakeTalon;
-		public static double intakeSpeed = -0.50;
+		public static double intakeSpeed = -0.75;		//Speed the robot runs the ball intake (-1 to 1)
 	
 	//LEDSystem components and variables
 	public static SerialPort arduino;
-	public static double serialDelay = .5;
+	public static double serialDelay = .5;				//Delay before sending another serial command (ended up mostly unused because the robot kept freezing. Serial overflow?)
 		
 	//PowerDistributionSystem components and variables
 	public static PowerDistributionPanel powerDistributionPanel;
 	
 	//Shooter components and variables
 	public static CANTalon shooterTalon;
-		public static double shooterSpeed = 1.00;
+		public static double shooterSpeed = 1.00;		//Speed multiplier for the shooter. You probably don't want to change this.
 		public static double shooterSpeedFunctionA = .048;	//These are the coefficients for a parabolic velocity function (y=Ax^2+Bx+C) used to calculate the speed needed to shoot the ball far enough.
 		public static double shooterSpeedFunctionB = 10.262;	//Example functions that we used in 2017 can be found at https://docs.google.com/spreadsheets/d/1XohjcKDPCyi3CSsj_TRhFFEKfISIe4YYJaIspVYB7Hk/
 		public static double shooterSpeedFunctionC = 215.143;//If you look at the results chart, Google Sheets has calculated a parabolic function for each line. Us the numbers before each x for these values.
 		
-		public static double shooterP = 10;
-		public static double shooterI = 0;
-		public static double shooterD = 0;
+		public static double shooterP = 10;			//P value for the shooter PID control
+		public static double shooterI = 0;			//I value for the shooter PID control
+		public static double shooterD = 0;			//D value for the shooter PID control
 		
-		public static double shooterSpeedError = 5;
-			
-	//Other various global variables
-	public static boolean driving; //variable used to determine whether the shooter joystick should be used for aiming
-	
+		public static double shooterSpeedError = 0;		//Error the shooter is allowed when setting the speed
+				
 	public static void init() {
 		//Instantiate all components to pass to Robot.java and add them to LiveWindow
 		
 		//Agitator components
-		agitatorTalon = new CANTalon(4);
-			LiveWindow.addActuator("Agitator", "Agitator Talon", agitatorTalon);
+		//agitatorTalon = new CANTalon(4);
+		//	LiveWindow.addActuator("Agitator", "Agitator Talon", agitatorTalon);
 		
 		//CameraSystem components
 		cameraTiltServo = new Servo(0);
@@ -165,7 +165,10 @@ public class RobotMap {
 			feederTalon.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
 			
 		//GearSwitch components
-		gearSwitch = new DigitalInput(4);
+		gearOpenSwitch = new DigitalInput(4);
+		gearClosedSwitch = new DigitalInput(5);
+		
+		gearArm = new CANTalon(4);
 			
 		//Intake components
 		intakeTalon = new CANTalon(7);
@@ -232,9 +235,7 @@ public class RobotMap {
 		//Feeder variables
 		putValueIfEmpty(receivedPreferences, "Feeder Speed", feederSpeed);		
 		
-		//GearSwitch variables
-		putValueIfEmpty(receivedPreferences, "Gear Switch Reversed", reverseGearSwitch);
-		putValueIfEmpty(receivedPreferences, "Gear Remove Delay", gearRemoveDelay);
+		//GearSystem variables
 
 		//Intake variables
 		putValueIfEmpty(receivedPreferences, "Intake Speed", intakeSpeed);
@@ -295,8 +296,6 @@ public class RobotMap {
 			feederSpeed = preferencesTable.getNumber("Feeder Speed", feederSpeed);		
 				
 		//GearSwitch variables
-			reverseGearSwitch = preferencesTable.getBoolean("Gear Switch Reversed", reverseGearSwitch);
-			gearRemoveDelay = preferencesTable.getNumber("Gear Remove Delay", gearRemoveDelay);
 
 		//Intake variables
 			intakeSpeed = preferencesTable.getNumber("Intake Speed", intakeSpeed);
