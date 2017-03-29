@@ -31,6 +31,7 @@ public class JoystickManager extends Command {
     	boolean driverButtonX = Robot.oi.driverButtonX.get();
     	boolean auxButtonTrigger = Robot.oi.auxButtonTrigger.get();
     	boolean auxButtonSecondary = Robot.oi.auxButtonSecondary.get();
+    	boolean auxButton7 = Robot.oi.auxButton7.get();
 
     	
     	if(Math.abs(driverXLeft) < Robot.oi.driverController_deadzoneRadiusLStick) {
@@ -44,12 +45,6 @@ public class JoystickManager extends Command {
     	}
     	if(Math.abs(auxTwistAxis) < Robot.oi.auxJoystick_deadzoneRadiusTwist) {
     		auxTwistAxis = 0;
-    	}
-    	    	    	
-    	if(driverXLeft == 0 && driverTriggerLeft == 0 && driverTriggerRight == 0 && !driverButtonX) {	//If the the driver is doing anything to drive the robot,
-    		RobotMap.driving = false;																	//set the driving variable to true. Otherwise, set the driving variable to false.
-    	} else {
-    		RobotMap.driving = true;
     	}
     	    	
     	double driveThrottle = driverTriggerRight - driverTriggerLeft;
@@ -72,21 +67,29 @@ public class JoystickManager extends Command {
     	} else if(auxTwistAxis != 0){
     		Robot.driveSystem.stationaryTurn(auxTwistAxis * .25);
     	} else {
-    		Robot.driveSystem.allStop();
+    		if(auxThrottle > 0) {
+    			Robot.driveSystem.tankDrive(auxThrottle * .25, 0);
+    		} else {
+    			Robot.driveSystem.allStop();
+    		}
     	}
-    	
+    	    	
     	if(auxButtonSecondary) {
-    		Robot.shooter.setSpeed(auxThrottle);
+    		Robot.shooter.setVelocity(330);
     		if(auxButtonTrigger) {
     			Robot.feeder.startFeeder();
-    			Robot.agitator.startAgitator();
     		} else {
     			Robot.feeder.stopFeeder();
-    			Robot.agitator.stopAgitator();
     		}
+    		
     	} else {
     		Robot.shooter.setSpeed(0);
     		Robot.feeder.stopFeeder();
+    	}
+    	
+    	if(auxButton7) {
+    		Robot.agitator.startAgitator();
+    	} else {
     		Robot.agitator.stopAgitator();
     	}
     }
